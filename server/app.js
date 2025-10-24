@@ -1,15 +1,19 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const API_KEY = "AIzaSyA58DzIGLJ7SE4NUHzyLFNa776Ind8aELM"; 
+const API_KEY = process.env.GEMINI_API_KEY;
 
 app.post("/ask", async (req, res) => {
   const { prompt } = req.body;
+
   if (!prompt) return res.status(400).json({ error: "Prompt is required" });
 
   try {
@@ -21,7 +25,6 @@ app.post("/ask", async (req, res) => {
       },
       { headers: { "Content-Type": "application/json" } }
     );
-
     const reply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
     res.json({ reply });
   } catch (error) {
